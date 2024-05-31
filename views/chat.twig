@@ -1,0 +1,45 @@
+<html lang="en">
+  <head>
+    <script src="/socket.io/socket.io.js"></script>
+    <title>Express Project</title>
+  </head>
+  <body>
+    <label for="chat">Chat</label>
+    <input
+      type="text"
+      id="chat"
+      placeholder="saisir votre message "
+      onkeyup="typing()"
+    />
+    <button onclick="send()">Send</button>
+
+    <script>
+      user = prompt("your name");
+      const socket = io.connect();
+      // Écouter les nouveaux messages
+      socket.on("message", (data) => {
+        let p = document.createElement("p");
+        p.innerText = data.user + ": " + data.message;
+        document.body.append(p);
+      });
+
+      socket.on("typing", (data) => {
+        let p = (document.createElement("p").innerText = data);
+        document.body.append(p + " is typing");
+      });
+
+      function send() {
+        let message = document.getElementById("chat");
+        messageAndUser = {
+          message: message.value,
+          user: user,
+        };
+        socket.emit("message", messageAndUser);
+      }
+
+      function typing() {
+        socket.emit("typing", user);
+      }
+    </script>
+  </body>
+</html>
